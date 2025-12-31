@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Customers</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="header">👥 Customers</div>
+
+<div class="container">
+  <div class="card">
+    <label>Customer Name</label>
+    <input type="text" id="custName">
+
+    <label>Mobile Number</label>
+    <input type="tel" id="custMobile">
+
+    <label>Rate per Liter (₹)</label>
+    <input type="number" id="custRate">
+
+    <button class="primary-btn" onclick="addCustomer()">Add Customer</button>
+  </div>
+
+  <div class="card">
+    <h3>Customer List</h3>
+    <ul id="customerList"></ul>
+  </div>
+</div>
+
+<script type="module" src="customers.js"></script>
+</body>
+</html>
