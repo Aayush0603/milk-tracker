@@ -4,7 +4,8 @@ import {
   collection,
   getDocs,
   doc,
-  setDoc
+  setDoc,
+  addDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 
@@ -115,3 +116,4 @@ async function sendRequest() {
   requestLiters.value = "";
   requestMessage.value = "";
 }
+
