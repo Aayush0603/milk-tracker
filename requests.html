@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Customer Requests</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="header">📩 Customer Requests</div>
+
+<div class="container">
+  <div class="card">
+    <button class="secondary-btn" onclick="location.href='index.html'">
+      ⬅ Back
+    </button>
+  </div>
+
+  <div class="card">
+    <table id="requestTable">
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Liters</th>
+          <th>Message</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script type="module" src="requests.js"></script>
+</body>
+</html>
