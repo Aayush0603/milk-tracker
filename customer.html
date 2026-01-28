@@ -1,44 +1,73 @@
-import { db } from "./firebase.js";
-import {
-  doc,
-  setDoc,
-  collection,
-  addDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<script>
+ if (localStorage.getItem("role") !== "customer") {
+  window.location.href = "login.html";
+}
+</script> 
 
-const mobile = localStorage.getItem("mobile");
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Milk Request</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-// 🥛 SAVE DAILY ENTRY
-document.getElementById("saveEntryBtn").addEventListener("click", async () => {
-  const date = document.getElementById("date").value;
-  const morning = parseFloat(document.getElementById("morning").value) || 0;
-  const evening = parseFloat(document.getElementById("evening").value) || 0;
+<div class="header">📩 Milk Request</div>
 
-  if (!date) return alert("Select date");
+<div class="container">
 
-  const month = date.slice(0, 7);
+  <div class="card">
+  <h3>🥛 Daily Milk Entry</h3>
 
-  await setDoc(
-    doc(db, "customers", mobile, "milkData", month, "days", date),
-    { morning, evening }
-  );
+  <label>Date</label>
+  <input type="date" id="date">
 
-  alert("Milk entry saved");
-});
+  <label>Morning Milk (liters)</label>
+  <input type="number" id="morning" step="0.1">
 
-// 📩 SEND REQUEST
-document.getElementById("requestBtn").addEventListener("click", async () => {
-  const date = document.getElementById("requestDate").value;
-  const type = document.getElementById("requestType").value;
-  const liters = parseFloat(document.getElementById("requestLiters").value) || 0;
-  const message = document.getElementById("requestMessage").value;
+  <label>Evening Milk (liters)</label>
+  <input type="number" id="evening" step="0.1">
 
-  if (!date) return alert("Select request date");
+  <button id="saveEntryBtn" class="primary-btn">Save Entry</button>
+</div>
 
-  await addDoc(
-    collection(db, "customers", mobile, "requests"),
-    { date, type, liters, message, status: "Pending" }
-  );
+  <div class="card">
+    <label>Date</label>
+    <input type="date" id="requestDate">
 
-  alert("Request sent");
-});
+    <label>Request Type</label>
+    <select id="requestType">
+      <option value="Extra Milk">Extra Milk</option>
+      <option value="No Milk">No Milk</option>
+      <option value="Custom">Custom Request</option>
+    </select>
+
+    <label>Liters (for Extra Milk)</label>
+    <input type="number" id="requestLiters" step="0.1">
+
+    <label>Message</label>
+    <input type="text" id="requestMessage">
+
+    <button id="requestBtn" class="primary-btn">Send Request</button>
+  </div>
+
+  <button class="secondary-btn" onclick="location.href='index.html'">
+    ⬅ Back to Entry
+  </button>
+
+  <button class="secondary-btn" onclick="logout()">🚪 Logout</button>
+
+
+</div>
+
+<script type="module" src="request.js"></script>
+
+<script>
+function logout() {
+  localStorage.clear();
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
