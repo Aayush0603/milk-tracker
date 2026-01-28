@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Monthly Summary</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="header">📊 My Monthly Milk Summary</div>
+
+<div class="container">
+
+  <div class="card">
+    <label>Select Month</label>
+    <input type="month" id="month">
+    <button id="calcBtn" class="primary-btn">View Summary</button>
+  </div>
+
+  <div class="card">
+    <table id="entryTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Morning</th>
+          <th>Evening</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <h3>Total Milk: <span id="totalMilk">0</span> L</h3>
+    <h3>Total Amount: ₹ <span id="totalAmount">0</span></h3>
+  </div>
+
+  <button class="secondary-btn" onclick="location.href='customer.html'">⬅ Back</button>
+  <button class="secondary-btn" onclick="logout()">🚪 Logout</button>
+
+</div>
+
+<script type="module" src="customer-summary.js"></script>
+
+<script>
+function logout() {
+  localStorage.clear();
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
