@@ -23,7 +23,7 @@ window.login = async function () {
   if (custSnap.exists()) {
     localStorage.setItem("role", "customer");
     localStorage.setItem("mobile", mobile);
-    window.location.href = "request.html";
+    window.location.href = "customer.html";
     return;
   }
 
@@ -33,4 +33,3 @@ window.login = async function () {
 function mobileInput() {
   return document.getElementById("mobile").value.trim();
 }
-

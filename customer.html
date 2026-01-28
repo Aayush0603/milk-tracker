@@ -1,0 +1,78 @@
+<script>
+ if (localStorage.getItem("role") !== "customer") {
+  window.location.href = "login.html";
+}
+</script> 
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Milk Request</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="header">📩 Milk Request</div>
+
+<div class="container">
+
+  <div class="card">
+    <label>Select Customer</label>
+    <select id="selectedCustomer"></select>
+  </div>
+
+  <div class="card">
+  <h3>🥛 Daily Milk Entry</h3>
+
+  <label>Date</label>
+  <input type="date" id="date">
+
+  <label>Morning Milk (liters)</label>
+  <input type="number" id="morning" step="0.1">
+
+  <label>Evening Milk (liters)</label>
+  <input type="number" id="evening" step="0.1">
+
+  <button id="saveEntryBtn" class="primary-btn">Save Entry</button>
+</div>
+
+  <div class="card">
+    <label>Date</label>
+    <input type="date" id="requestDate">
+
+    <label>Request Type</label>
+    <select id="requestType">
+      <option value="Extra Milk">Extra Milk</option>
+      <option value="No Milk">No Milk</option>
+      <option value="Custom">Custom Request</option>
+    </select>
+
+    <label>Liters (for Extra Milk)</label>
+    <input type="number" id="requestLiters" step="0.1">
+
+    <label>Message</label>
+    <input type="text" id="requestMessage">
+
+    <button id="requestBtn" class="primary-btn">Send Request</button>
+  </div>
+
+  <button class="secondary-btn" onclick="location.href='index.html'">
+    ⬅ Back to Entry
+  </button>
+
+  <button class="secondary-btn" onclick="logout()">🚪 Logout</button>
+
+
+</div>
+
+<script type="module" src="request.js"></script>
+
+<script>
+function logout() {
+  localStorage.clear();
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
