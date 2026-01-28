@@ -33,9 +33,12 @@ tableBody.innerHTML += `
     <td>${data.liters || "-"}</td>
     <td>${data.message || "-"}</td>
     <td>
-      ${data.status}
-      ${data.status === "Pending" ? `<button class="doneBtn" data-id="${r.id}" data-cust="${custId}">Done</button>` : ""}
-    </td>
+  <select class="statusSelect" data-id="${r.id}" data-cust="${custId}">
+    <option ${data.status === "Pending" ? "selected" : ""}>Pending</option>
+    <option ${data.status === "Approved" ? "selected" : ""}>Approved</option>
+    <option ${data.status === "Completed" ? "selected" : ""}>Completed</option>
+  </select>
+</td>
   </tr>
 `;
 
@@ -43,17 +46,19 @@ tableBody.innerHTML += `
   }
 }
 
-document.addEventListener("click", async (e) => {
-  if (e.target.classList.contains("doneBtn")) {
+document.addEventListener("change", async (e) => {
+  if (e.target.classList.contains("statusSelect")) {
     const requestId = e.target.dataset.id;
     const customerId = e.target.dataset.cust;
+    const newStatus = e.target.value;
 
     await updateDoc(
       doc(db, "customers", customerId, "requests", requestId),
-      { status: "Completed" }
+      { status: newStatus }
     );
 
-    alert("Request marked as completed");
-    location.reload();
+    alert("Status updated to " + newStatus);
   }
 });
+
+
