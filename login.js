@@ -14,7 +14,7 @@ window.login = async function () {
   if (adminSnap.exists()) {
     localStorage.setItem("role", "admin");
     localStorage.setItem("mobile", mobile);
-    window.location.href = "index.html";
+    window.location.href = "admin.html";
     return;
   }
 
@@ -33,3 +33,4 @@ window.login = async function () {
 function mobileInput() {
   return document.getElementById("mobile").value.trim();
 }
+
