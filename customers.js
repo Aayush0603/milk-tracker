@@ -77,21 +77,50 @@ document.addEventListener("click", async (e) => {
 
   // ✏ EDIT
   if (e.target.classList.contains("editBtn")) {
-    const id = e.target.dataset.id;
+  const oldId = e.target.dataset.id;
 
-    const newName = prompt("Enter new name:");
-    const newRate = prompt("Enter new rate:");
+  const snap = await getDoc(doc(db, "customers", oldId));
+  const data = snap.data();
 
-    if (!newName || !newRate) return;
+  const newName = prompt("Enter new name:", data.name);
+  const newRate = prompt("Enter new rate:", data.rate);
+  const newMobile = prompt("Enter new mobile number:", oldId);
 
-    await updateDoc(doc(db, "customers", id), {
+  if (!newName || !newRate || !newMobile) return;
+
+  const mobileRegex = /^[0-9]{10}$/;
+  if (!mobileRegex.test(newMobile)) {
+    alert("Mobile must be 10 digits");
+    return;
+  }
+
+  // If mobile changed → create new doc and delete old
+  if (newMobile !== oldId) {
+    const existing = await getDoc(doc(db, "customers", newMobile));
+    if (existing.exists()) {
+      alert("Mobile already exists");
+      return;
+    }
+
+    // copy data to new doc
+    await setDoc(doc(db, "customers", newMobile), {
       name: newName,
       rate: parseFloat(newRate)
     });
 
-    alert("Customer updated");
-    loadCustomers();
+    // delete old doc
+    await deleteDoc(doc(db, "customers", oldId));
+  } else {
+    // only update name/rate
+    await updateDoc(doc(db, "customers", oldId), {
+      name: newName,
+      rate: parseFloat(newRate)
+    });
   }
+
+  alert("Customer updated");
+  loadCustomers();
+}
 
   // 🗑 DELETE
   if (e.target.classList.contains("deleteBtn")) {
@@ -106,4 +135,5 @@ document.addEventListener("click", async (e) => {
   }
 
 });
+
 
