@@ -86,6 +86,8 @@ document.addEventListener("click", async (e) => {
   const newName = prompt("Enter new name:", data.name);
   const newRate = prompt("Enter new rate:", data.rate);
   const newMobile = prompt("Enter new mobile number:", oldId);
+  console.log("Editing", oldId, "→", newMobile);
+
 
   if (!newName || !newRate || !newMobile) return;
 
@@ -180,6 +182,7 @@ for (const monthDoc of monthsSnap.docs) {
   }
 
 });
+
 
 
 
