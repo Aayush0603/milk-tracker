@@ -77,8 +77,10 @@ loadCustomers();
 document.addEventListener("click", async (e) => {
 
   // ✏ EDIT
-  if (e.target.classList.contains("editBtn")) {
-  const oldId = e.target.dataset.id;
+  const editBtn = e.target.closest(".editBtn");
+if (editBtn) {
+  const oldId = editBtn.dataset.id;
+
 
   const snap = await getDoc(doc(db, "customers", oldId));
   const data = snap.data();
@@ -171,8 +173,10 @@ for (const monthDoc of monthsSnap.docs) {
 }
 
   // 🗑 DELETE
-  if (e.target.classList.contains("deleteBtn")) {
-    const id = e.target.dataset.id;
+  const deleteBtn = e.target.closest(".deleteBtn");
+if (deleteBtn) {
+  const id = deleteBtn.dataset.id;
+
 
     if (!confirm("Delete this customer?")) return;
 
@@ -183,6 +187,7 @@ for (const monthDoc of monthsSnap.docs) {
   }
 
 });
+
 
 
 
