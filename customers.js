@@ -89,7 +89,7 @@ document.addEventListener("click", async (e) => {
   console.log("Editing", oldId, "→", newMobile);
 
 
-  if (!newName || !newRate || !newMobile) return;
+  if (newName === null || newRate === null || newMobile === null) return;
 
   const mobileRegex = /^[0-9]{10}$/;
   if (!mobileRegex.test(newMobile)) {
@@ -122,6 +122,7 @@ document.addEventListener("click", async (e) => {
     rate: parseFloat(newRate)
   });
 
+console.log("Starting milk migration...");
 // 🔄 MIGRATE MILK DATA (DIRECT METHOD)
 const monthsSnap = await getDocs(collection(db, "customers", oldId, "milkData"));
 
@@ -182,6 +183,7 @@ for (const monthDoc of monthsSnap.docs) {
   }
 
 });
+
 
 
 
