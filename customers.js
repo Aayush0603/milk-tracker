@@ -120,22 +120,25 @@ document.addEventListener("click", async (e) => {
     rate: parseFloat(newRate)
   });
 
-// 🔄 MIGRATE MILK DATA USING collectionGroup
+// 🔄 MIGRATE MILK DATA
 const allDaysSnap = await getDocs(collectionGroup(db, "days"));
 
 for (const day of allDaysSnap.docs) {
-  if (day.ref.path.includes(`customers/${oldId}/milkData/`)) {
-    const pathParts = day.ref.path.split("/");
+  const parts = day.ref.path.split("/");
 
-    const monthId = pathParts[3];   // milkData/{month}
-    const dateId = day.id;
+  const custId = parts[1];      // customers/{id}
+  const monthId = parts[3];     // milkData/{month}
+  const dateId = parts[5];      // days/{date}
 
+  if (custId === oldId) {
+    // copy to new location
     await setDoc(
       doc(db, "customers", newMobile, "milkData", monthId, "days", dateId),
       day.data()
     );
 
-    await deleteDoc(day.ref); // delete old
+    // delete old
+    await deleteDoc(day.ref);
   }
 }
 
@@ -174,6 +177,7 @@ for (const day of allDaysSnap.docs) {
   }
 
 });
+
 
 
 
