@@ -94,31 +94,72 @@ document.addEventListener("click", async (e) => {
     return;
   }
 
-  // If mobile changed → create new doc and delete old
-  if (newMobile !== oldId) {
-    const existing = await getDoc(doc(db, "customers", newMobile));
-    if (existing.exists()) {
-      alert("Mobile already exists");
-      return;
-    }
-
-    // copy data to new doc
-    await setDoc(doc(db, "customers", newMobile), {
-      name: newName,
-      rate: parseFloat(newRate)
-    });
-
-    // delete old doc
-    await deleteDoc(doc(db, "customers", oldId));
-  } else {
-    // only update name/rate
+  // If mobile unchanged → normal update
+  if (newMobile === oldId) {
     await updateDoc(doc(db, "customers", oldId), {
       name: newName,
       rate: parseFloat(newRate)
     });
+
+    alert("Customer updated");
+    loadCustomers();
+    return;
   }
 
-  alert("Customer updated");
+  // Check new mobile not already used
+  const existing = await getDoc(doc(db, "customers", newMobile));
+  if (existing.exists()) {
+    alert("Mobile already exists");
+    return;
+  }
+
+  // 🔄 Create new customer doc
+  await setDoc(doc(db, "customers", newMobile), {
+    name: newName,
+    rate: parseFloat(newRate)
+  });
+
+  // 🔄 MIGRATE MILK DATA
+  const milkMonths = await getDocs(collection(db, "customers", oldId, "milkData"));
+  for (const monthDoc of milkMonths.docs) {
+    const monthId = monthDoc.id;
+
+    const daysSnap = await getDocs(collection(db, "customers", oldId, "milkData", monthId, "days"));
+
+    for (const day of daysSnap.docs) {
+      await setDoc(
+        doc(db, "customers", newMobile, "milkData", monthId, "days", day.id),
+        day.data()
+      );
+    }
+  }
+
+  // 🔄 MIGRATE REQUESTS
+  const reqSnap = await getDocs(collection(db, "customers", oldId, "requests"));
+  for (const req of reqSnap.docs) {
+    await setDoc(
+      doc(db, "customers", newMobile, "requests", req.id),
+      req.data()
+    );
+  }
+
+  // 🗑 Delete old subcollections (milk + requests)
+  for (const monthDoc of milkMonths.docs) {
+    const monthId = monthDoc.id;
+    const daysSnap = await getDocs(collection(db, "customers", oldId, "milkData", monthId, "days"));
+    for (const day of daysSnap.docs) {
+      await deleteDoc(doc(db, "customers", oldId, "milkData", monthId, "days", day.id));
+    }
+  }
+
+  for (const req of reqSnap.docs) {
+    await deleteDoc(doc(db, "customers", oldId, "requests", req.id));
+  }
+
+  // 🗑 Delete old customer document
+  await deleteDoc(doc(db, "customers", oldId));
+
+  alert("Customer mobile updated and all records migrated");
   loadCustomers();
 }
 
@@ -135,5 +176,6 @@ document.addEventListener("click", async (e) => {
   }
 
 });
+
 
 
