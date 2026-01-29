@@ -126,16 +126,27 @@ if (editBtn) {
 
 console.log("Starting milk migration...");
 
+// 1️⃣ Move Requests
+const oldReqSnap = await getDocs(collection(db, "customers", oldId, "requests"));
+for (const req of oldReqSnap.docs) {
+  await setDoc(doc(db, "customers", newMobile, "requests", req.id), req.data());
+  await deleteDoc(req.ref);
+}
+
+// 2️⃣ Move ALL milk day records using collectionGroup
 const daysSnap = await getDocs(collectionGroup(db, "days"));
 
 for (const dayDoc of daysSnap.docs) {
   const path = dayDoc.ref.path;
 
-  if (path.startsWith(`customers/${oldId}/milkData/`)) {
-    const parts = path.split("/");
+  // customers/{oldId}/milkData/{month}/days/{date}
+  const parts = path.split("/");
 
-    const monthId = parts[3]; // milkData/{month}
-    const dateId = parts[5];  // days/{date}
+  if (parts[1] === oldId) {
+    const monthId = parts[3];
+    const dateId = parts[5];
+
+    console.log("Moving:", path);
 
     await setDoc(
       doc(db, "customers", newMobile, "milkData", monthId, "days", dateId),
@@ -147,6 +158,10 @@ for (const dayDoc of daysSnap.docs) {
 }
 
 console.log("Milk migration finished");
+
+// 3️⃣ Delete old customer doc
+await deleteDoc(doc(db, "customers", oldId));
+
 
     // Delete empty month docs
 for (const monthDoc of monthsSnap.docs) {
@@ -190,6 +205,7 @@ if (deleteBtn) {
   }
 
 });
+
 
 
 
