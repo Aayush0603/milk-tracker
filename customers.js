@@ -149,15 +149,7 @@ for (const day of allDaysSnap.docs) {
     );
   }
 
-  // 🗑 Delete old subcollections (milk + requests)
-  for (const monthDoc of milkMonths.docs) {
-    const monthId = monthDoc.id;
-    const daysSnap = await getDocs(collection(db, "customers", oldId, "milkData", monthId, "days"));
-    for (const day of daysSnap.docs) {
-      await deleteDoc(doc(db, "customers", oldId, "milkData", monthId, "days", day.id));
-    }
-  }
-
+  // 🗑 Delete old requests
   for (const req of reqSnap.docs) {
     await deleteDoc(doc(db, "customers", oldId, "requests", req.id));
   }
@@ -182,6 +174,7 @@ for (const day of allDaysSnap.docs) {
   }
 
 });
+
 
 
 
