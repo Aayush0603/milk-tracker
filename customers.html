@@ -1,3 +1,9 @@
+<script>
+if (localStorage.getItem("role") !== "admin") {
+  window.location.href = "index.html";
+}
+</script>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,6 +15,7 @@
 <div class="header">👥 Customers</div>
 
 <div class="container">
+
   <div class="card">
     <label>Customer Name</label>
     <input type="text" id="custName">
@@ -26,6 +33,13 @@
     <h3>Customer List</h3>
     <ul id="customerList"></ul>
   </div>
+
+  <div class="card">
+    <button class="secondary-btn" onclick="location.href='admin.html'">
+      ⬅ Back to Dashboard
+    </button>
+  </div>
+
 </div>
 
 <script type="module" src="customers.js"></script>
