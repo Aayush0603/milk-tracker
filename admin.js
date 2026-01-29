@@ -10,17 +10,14 @@ window.loadAdminSummary = async function () {
   table.innerHTML = "";
 
   const selectedMonth = document.getElementById("adminMonth").value;
-  if (!selectedMonth) {
-  table.innerHTML = `<tr><td colspan="2">Please select a month</td></tr>`;
-  return;
-}
+  table.innerHTML = `<tr><td colspan="3">Please select a month</td></tr>`;
 
 
   const customersSnap = await getDocs(collection(db, "customers"));
 
   for (const cust of customersSnap.docs) {
     const name = cust.data().name;
-    const rate = cust.data().rate || 0;
+    const rate = parseFloat(cust.data().rate) || 0;
     const mobile = cust.id;
 
 
@@ -34,7 +31,8 @@ window.loadAdminSummary = async function () {
       const data = d.data();
       totalMilk += (data.morning || 0) + (data.evening || 0);
     });
-
+    console.log(name, rate, totalMilk);
+    
     const amount = totalMilk * rate;
 
 table.innerHTML += `
@@ -67,4 +65,5 @@ async function loadCustomers() {
     select.appendChild(opt);
   });
 }
+
 
