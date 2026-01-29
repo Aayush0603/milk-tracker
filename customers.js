@@ -4,7 +4,9 @@ import {
   setDoc,
   getDocs,
   getDoc,
-  collection
+  collection,
+  updateDoc,
+  deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 window.addCustomer = async function () {
@@ -57,8 +59,51 @@ async function loadCustomers() {
 
   const snap = await getDocs(collection(db, "customers"));
   snap.forEach(d => {
-    list.innerHTML += `<li>${d.data().name} (${d.id})</li>`;
-  });
+  const data = d.data();
+  list.innerHTML += `
+    <li>
+      ${data.name} (${d.id}) — ₹${data.rate}
+      <button class="editBtn" data-id="${d.id}">✏</button>
+      <button class="deleteBtn" data-id="${d.id}">🗑</button>
+    </li>
+  `;
+});
+
 }
 
 loadCustomers();
+
+document.addEventListener("click", async (e) => {
+
+  // ✏ EDIT
+  if (e.target.classList.contains("editBtn")) {
+    const id = e.target.dataset.id;
+
+    const newName = prompt("Enter new name:");
+    const newRate = prompt("Enter new rate:");
+
+    if (!newName || !newRate) return;
+
+    await updateDoc(doc(db, "customers", id), {
+      name: newName,
+      rate: parseFloat(newRate)
+    });
+
+    alert("Customer updated");
+    loadCustomers();
+  }
+
+  // 🗑 DELETE
+  if (e.target.classList.contains("deleteBtn")) {
+    const id = e.target.dataset.id;
+
+    if (!confirm("Delete this customer?")) return;
+
+    await deleteDoc(doc(db, "customers", id));
+
+    alert("Customer deleted");
+    loadCustomers();
+  }
+
+});
+
