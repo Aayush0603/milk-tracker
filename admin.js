@@ -20,7 +20,9 @@ window.loadAdminSummary = async function () {
 
   for (const cust of customersSnap.docs) {
     const name = cust.data().name;
+    const rate = cust.data().rate || 0;
     const mobile = cust.id;
+
 
     let totalMilk = 0;
 
@@ -33,12 +35,16 @@ window.loadAdminSummary = async function () {
       totalMilk += (data.morning || 0) + (data.evening || 0);
     });
 
-    table.innerHTML += `
-      <tr>
-        <td>${name}</td>
-        <td>${totalMilk.toFixed(2)}</td>
-      </tr>
-    `;
+    const amount = totalMilk * rate;
+
+table.innerHTML += `
+  <tr>
+    <td>${name}</td>
+    <td>${totalMilk.toFixed(2)}</td>
+    <td>₹ ${amount.toFixed(2)}</td>
+  </tr>
+`;
+
   }
 }
 
@@ -61,3 +67,4 @@ async function loadCustomers() {
     select.appendChild(opt);
   });
 }
+
