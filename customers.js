@@ -125,25 +125,28 @@ if (editBtn) {
   });
 
 console.log("Starting milk migration...");
-// 🔄 MIGRATE MILK DATA (DIRECT METHOD)
-const monthsSnap = await getDocs(collection(db, "customers", oldId, "milkData"));
 
-for (const monthDoc of monthsSnap.docs) {
-  const monthId = monthDoc.id;
+const daysSnap = await getDocs(collectionGroup(db, "days"));
 
-  const daysSnap = await getDocs(
-    collection(db, "customers", oldId, "milkData", monthId, "days")
-  );
+for (const dayDoc of daysSnap.docs) {
+  const path = dayDoc.ref.path;
 
-  for (const dayDoc of daysSnap.docs) {
+  if (path.startsWith(`customers/${oldId}/milkData/`)) {
+    const parts = path.split("/");
+
+    const monthId = parts[3]; // milkData/{month}
+    const dateId = parts[5];  // days/{date}
+
     await setDoc(
-      doc(db, "customers", newMobile, "milkData", monthId, "days", dayDoc.id),
+      doc(db, "customers", newMobile, "milkData", monthId, "days", dateId),
       dayDoc.data()
     );
 
     await deleteDoc(dayDoc.ref);
   }
 }
+
+console.log("Milk migration finished");
 
     // Delete empty month docs
 for (const monthDoc of monthsSnap.docs) {
@@ -187,6 +190,7 @@ if (deleteBtn) {
   }
 
 });
+
 
 
 
