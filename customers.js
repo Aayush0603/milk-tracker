@@ -120,26 +120,29 @@ document.addEventListener("click", async (e) => {
     rate: parseFloat(newRate)
   });
 
-// 🔄 MIGRATE MILK DATA
-const allDaysSnap = await getDocs(collectionGroup(db, "days"));
+// 🔄 MIGRATE MILK DATA (DIRECT METHOD)
+const monthsSnap = await getDocs(collection(db, "customers", oldId, "milkData"));
 
-for (const day of allDaysSnap.docs) {
-  const parts = day.ref.path.split("/");
+for (const monthDoc of monthsSnap.docs) {
+  const monthId = monthDoc.id;
 
-  const custId = parts[1];      // customers/{id}
-  const monthId = parts[3];     // milkData/{month}
-  const dateId = parts[5];      // days/{date}
+  const daysSnap = await getDocs(
+    collection(db, "customers", oldId, "milkData", monthId, "days")
+  );
 
-  if (custId === oldId) {
-    // copy to new location
+  for (const dayDoc of daysSnap.docs) {
     await setDoc(
-      doc(db, "customers", newMobile, "milkData", monthId, "days", dateId),
-      day.data()
+      doc(db, "customers", newMobile, "milkData", monthId, "days", dayDoc.id),
+      dayDoc.data()
     );
 
-    // delete old
-    await deleteDoc(day.ref);
+    await deleteDoc(dayDoc.ref);
   }
+}
+
+    // Delete empty month docs
+for (const monthDoc of monthsSnap.docs) {
+  await deleteDoc(doc(db, "customers", oldId, "milkData", monthDoc.id));
 }
 
 
@@ -177,6 +180,7 @@ for (const day of allDaysSnap.docs) {
   }
 
 });
+
 
 
 
