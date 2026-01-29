@@ -6,7 +6,8 @@ import {
   getDoc,
   collection,
   updateDoc,
-  deleteDoc
+  deleteDoc,
+  collectionGroup
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 window.addCustomer = async function () {
@@ -119,20 +120,25 @@ document.addEventListener("click", async (e) => {
     rate: parseFloat(newRate)
   });
 
-  // 🔄 MIGRATE MILK DATA
-  const milkMonths = await getDocs(collection(db, "customers", oldId, "milkData"));
-  for (const monthDoc of milkMonths.docs) {
-    const monthId = monthDoc.id;
+// 🔄 MIGRATE MILK DATA USING collectionGroup
+const allDaysSnap = await getDocs(collectionGroup(db, "days"));
 
-    const daysSnap = await getDocs(collection(db, "customers", oldId, "milkData", monthId, "days"));
+for (const day of allDaysSnap.docs) {
+  if (day.ref.path.includes(`customers/${oldId}/milkData/`)) {
+    const pathParts = day.ref.path.split("/");
 
-    for (const day of daysSnap.docs) {
-      await setDoc(
-        doc(db, "customers", newMobile, "milkData", monthId, "days", day.id),
-        day.data()
-      );
-    }
+    const monthId = pathParts[3];   // milkData/{month}
+    const dateId = day.id;
+
+    await setDoc(
+      doc(db, "customers", newMobile, "milkData", monthId, "days", dateId),
+      day.data()
+    );
+
+    await deleteDoc(day.ref); // delete old
   }
+}
+
 
   // 🔄 MIGRATE REQUESTS
   const reqSnap = await getDocs(collection(db, "customers", oldId, "requests"));
@@ -176,6 +182,7 @@ document.addEventListener("click", async (e) => {
   }
 
 });
+
 
 
 
